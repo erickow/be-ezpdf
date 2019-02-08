@@ -1,0 +1,7 @@
+version: '3'
+services:
+  be-pdfconvert:
+    build: .
+    command: npm start
+    ports: 
+      - 8081:5959
