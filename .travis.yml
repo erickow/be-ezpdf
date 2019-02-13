@@ -1,0 +1,10 @@
+sudo: required
+services:
+  - docker
+
+script:
+  - docker build --tag ezpdf .
+  - docker run ezpdf
+
+after_script:
+  - docker images

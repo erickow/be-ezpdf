@@ -2,6 +2,7 @@ const express = require("express")
 const multer = require('multer');
 const fs = require('fs');
 const FileCleaner = require('cron-file-cleaner').FileCleaner;
+const bodyParser = require('body-parser');
 
 const PDFConvert = require('./utils/pdfconvert');
 
@@ -12,6 +13,9 @@ const UPLOAD_PATH = './uploads';
 const OUTPUT_PATH = './outputs';
 // app
 const app = express();
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 const fileUploadWatcher = new FileCleaner(UPLOAD_PATH, 600000,  '* */1 * * * *', {
   start: true
@@ -70,23 +74,23 @@ app.post('/uploads', upload.array("files"), (req, res) => {
 });
 
 app.post('/split', (req, res) => {
-  const file = `./uploads/${req.body.name}`;
-  const pdfDoc = new HummusRecipe(file);
-  const outputDir = path.join(__dirname, 'outputs');
-  
-  pdfDoc
-      .split(outputDir, 'prefix')
-      .endPDF();
+
+  PDFConvert.split(req.body).endPDF();
 
   res.json({
     files: "file berhasil di split"
   })
 });
 
-app.post('/encrypt', (req, res) => {
-
-  const filename = PDFConvert.encrypt(req.body);
-  res.download(filename);
+app.get('/encrypt', (req, res, body) => {
+  const data = {
+    name: req.query.name,
+    password: req.query.password
+  }
+  console.log(data)
+  const filename = PDFConvert.encrypt(data);
+  console.log(filename);
+  res.status(200).download(filename, filename);
 });
 
 app.delete('/deleteUploads', (req, res) => {
@@ -101,7 +105,7 @@ app.delete('/deleteUploads', (req, res) => {
       });
     }
   });
-  res.json({
+  res.status(200).json({
     files: "Folder has been deleted"
   })
 });
