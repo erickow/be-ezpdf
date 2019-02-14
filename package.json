@@ -21,7 +21,6 @@
     "cors": "^2.8.5",
     "cron-file-cleaner": "^1.1.0",
     "express": "^4.16.4",
-    "hummus": "^1.0.95",
     "hummus-recipe": "^1.8.1",
     "multer": "^1.4.1",
     "nodemon": "^1.18.9"
